@@ -51,7 +51,7 @@ public static class LuaCoroutine
 
         function WaitForSeconds(t)
             local co = coroutine.running()
-            local resume = function()    
+            local resume = function()                    
                 _resume(co)                     
             end
             
@@ -91,7 +91,13 @@ public static class LuaCoroutine
 
         function StartCoroutine(func)
             local co = coroutine.create(func)                       
-            coroutine.resume(co)
+            local flag, msg = coroutine.resume(co)
+
+            if not flag then
+                msg = debug.traceback(co, msg)
+                error(msg)
+            end
+
             return co
         end
 
@@ -117,7 +123,7 @@ public static class LuaCoroutine
         state.RegFunction("StopCoroutine", StopCoroutine);
         state.EndModule();
 
-        state.LuaDoString(strCo);
+        state.LuaDoString(strCo, "LuaCoroutine.cs");
         mb = behaviour;
     }
 
